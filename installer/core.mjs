@@ -172,7 +172,15 @@ export function createInstaller(options = {}) {
         try {
             await refresh();
             if (state.error) throw new Error(state.error);
-            if (platform !== "darwin" && state.running.length) throw new Error("Fermez complètement Discord, y compris son icône de notification, puis réessayez. En cours : " + state.running.join(", ") + ".");
+            if (platform !== "darwin" && state.running.length && request.allowRunning !== true) {
+                return {
+                    ok: false,
+                    code: "discord-running",
+                    message: "Discord semble encore ouvert : " + state.running.join(", ") + ". Fermez-le complètement, ou installez quand même en ignorant cet avertissement. En cours : " + state.running.join(", ") + ".",
+                    results,
+                    state: snapshot()
+                };
+            }
             const targets = requested.map(previous => {
                 const target = registry.get(previous.id);
                 if (!target || target.path !== previous.path) throw new Error("Les installations ont changé. Actualisez la liste avant de recommencer.");
@@ -207,7 +215,7 @@ export function createInstaller(options = {}) {
                 progress({ stage: installing ? "injecting" : "restoring", percent: Math.round(100 * completed / steps), message: (installing ? "Installation dans " : "Restauration de ") + target.name + "…", targetId: target.id });
                 try {
                     const running = await listRunning(targets);
-                    if (running.length) throw new Error("Discord a été relancé. Fermez-le complètement avant de réessayer.");
+                    if (running.length && request.allowRunning !== true) throw new Error("Discord a été relancé. Fermez-le complètement avant de réessayer.");
                     const migration = migrating ? helpers.migrateVencordResource(target.path, patcherPath) : null;
                     const status = migration?.status ?? (installing ? helpers.injectResource(target.path, patcherPath) : helpers.uninjectResource(target.path));
                     results.push({ id: target.id, ok: true, status, ...(migration ? { recoveryDir: migration.recoveryDir } : {}), message: migration

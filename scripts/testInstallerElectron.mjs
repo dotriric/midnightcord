@@ -96,6 +96,7 @@ async function electronTest(config) {
         await evaluate("document.getElementById('rescan').click()");
         await waitFor("document.getElementById('notice-text').textContent.includes('encore ouvert') && !document.getElementById('rescan').disabled", "Running-process notice missing");
         assert.equal(await evaluate("document.getElementById('perform').disabled"), true);
+        assert.equal(await evaluate("document.getElementById('force-perform').hidden"), false, "Forced install action must be offered when Discord is running");
         await fs.writeFile(config.processControl, JSON.stringify({ fail: true }));
         await evaluate("document.getElementById('rescan').click()");
         await waitFor("!document.getElementById('scan-error').hidden && !document.getElementById('rescan').disabled", "Process scan failure is not visible");
@@ -174,7 +175,7 @@ async function electronTest(config) {
         assert.match(await evaluate("document.getElementById('notice-text').textContent"), /fermées automatiquement, puis relancées/);
         await evaluate("document.getElementById('perform').click()");
         await waitFor("!document.getElementById('progress-view').hidden && !document.getElementById('back').hidden", "macOS perform guard blocked the request");
-        assert.deepEqual(macRequests, [{ action: "install", targetIds: [selected.id] }]);
+        assert.deepEqual(macRequests, [{ action: "install", targetIds: [selected.id], allowRunning: false }]);
         assert.match(await evaluate("document.getElementById('progress-footnote').textContent"), /relancé automatiquement/);
         macState.error = "Impossible de vérifier les processus.";
         await evaluate("document.getElementById('back').click()");

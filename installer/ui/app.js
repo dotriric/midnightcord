@@ -44,6 +44,7 @@ function announce(message) { byId("announcement").textContent = message; }
 function eligible(target) { return !!target && target.writable !== false && (mode === "migrate-vencord" ? target.vencord : !target.conflict && (mode === "install" || target.installed)); }
 function errorText(error) { return error?.message || "Une erreur est survenue. Réessayez après avoir fermé Discord."; }
 function runningBlocksOperation() { return state.platform !== "darwin" && !!state.running?.length; }
+function forceLabel() { return mode === "migrate-vencord" ? "Migrer quand même" : mode === "uninstall" ? "Retirer quand même" : "Installer quand même"; }
 
 function updateSelection() {
     const targets = state.targets.filter(target => selected.has(target.id));
@@ -52,6 +53,9 @@ function updateSelection() {
     byId("perform").disabled = !count || working || scanning || !!state.error || runningBlocksOperation();
     byId("perform-label").textContent = mode === "migrate-vencord" ? "Migrer depuis Vencord" : mode === "uninstall" ? "Retirer Midnightcord" : count && targets.every(target => target.installed) ? "Réparer Midnightcord" : "Installer Midnightcord";
     byId("perform").classList.toggle("remove", mode === "uninstall");
+    byId("force-perform").hidden = !runningBlocksOperation();
+    byId("force-perform").textContent = forceLabel();
+    byId("force-perform").disabled = !count || working || scanning || !!state.error;
     for (const card of byId("targets").children) card.classList.toggle("selected", selected.has(card.dataset.id));
 }
 
@@ -98,7 +102,7 @@ function renderTargets() {
             : mode === "uninstall" ? "Discord sera restauré. Vos réglages Midnightcord sont conservés. "
                 : state.targets.some(target => target.vencord) ? "Vencord est détecté : choisissez « Depuis Vencord » pour le remplacer et conserver vos données. " : "") + macNotice
         : running.length
-        ? `${running.join(", ")} est encore ouvert. Fermez complètement Discord, puis actualisez la liste.`
+        ? `${running.join(", ")} est encore ouvert. Fermez complètement Discord, puis actualisez la liste — ou utilisez « ${forceLabel()} » pour continuer malgré tout.`
         : mode === "migrate-vencord" ? "Le chargeur Vencord sera sauvegardé puis remplacé. Vos réglages et thèmes Vencord restent intacts et pourront être importés dans Midnightcord après le redémarrage. Fermez Discord complètement."
             : mode === "uninstall" ? "Discord sera restauré. Vos réglages Midnightcord sont conservés." : state.targets.some(target => target.vencord)
                 ? "Vencord est détecté : choisissez « Depuis Vencord » pour le remplacer et conserver vos données. Fermez Discord complètement avant de continuer."
@@ -185,8 +189,9 @@ function showResult(result) {
     byId("back").focus();
 }
 
-async function perform() {
-    if (working || scanning || !selected.size || state.error || runningBlocksOperation()) return;
+async function perform(allowRunning = false) {
+    if (working || scanning || !selected.size || state.error) return;
+    if (runningBlocksOperation() && !allowRunning) return;
     lockControls(true);
     byId("progress-view").classList.remove("complete", "failed");
     byId("stage-symbol").replaceChildren(mode === "uninstall" ? icon("restore") : logo());
@@ -200,7 +205,7 @@ async function perform() {
     document.querySelector('.progress-steps [data-stage="copying"]').hidden = mode === "uninstall";
     showView("progress");
     onProgress({ stage: "checking", percent: 0, message: "Vérification de Discord" });
-    try { showResult(await bridge.perform({ action: mode, targetIds: [...selected] })); }
+    try { showResult(await bridge.perform({ action: mode, targetIds: [...selected], allowRunning })); }
     catch (error) { showResult({ ok: false, message: errorText(error) }); }
     finally { lockControls(false); }
 }
@@ -224,6 +229,7 @@ function changeMode(next) {
 
 byId("rescan").addEventListener("click", () => void scan());
 byId("perform").addEventListener("click", () => void perform());
+byId("force-perform").addEventListener("click", () => void perform(true));
 byId("back").addEventListener("click", () => { selected.clear(); void scan(); });
 byId("install-mode").addEventListener("click", () => changeMode("install"));
 byId("migrate-vencord-mode").addEventListener("click", () => changeMode("migrate-vencord"));

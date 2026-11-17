@@ -272,7 +272,7 @@ test("a conflicting mod in any selected target stops the entire job before mutat
     assert.equal(existsSync(f.installedDist), false);
 });
 
-test("a running Discord process blocks install and uninstall without filesystem changes", async t => {
+test("a running Discord process blocks by default but can be overridden", async t => {
     const f = await fixture(t);
     await f.discord("stable");
     const app = f.app({ listRunning: async () => ["Discord.exe"] });
@@ -281,8 +281,14 @@ test("a running Discord process blocks install and uninstall without filesystem 
     for (const action of ["install", "uninstall"]) {
         const result = await app.perform({ action, targetIds: [targets[0].id] });
         assert.equal(result.ok, false);
+        assert.equal(result.code, "discord-running");
         assert.deepEqual(await snapshot(f.home), before);
     }
+    const forced = await app.perform({ action: "install", targetIds: [targets[0].id], allowRunning: true });
+    assert.equal(forced.ok, true, forced.message);
+    assert.equal(existsSync(f.installedDist), true);
+    const restored = await app.perform({ action: "uninstall", targetIds: [targets[0].id], allowRunning: true });
+    assert.equal(restored.ok, true, restored.message);
 });
 
 test("macOS closes only selected apps before copying, completes the batch, then reopens them", async t => {
