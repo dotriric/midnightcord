@@ -11,7 +11,7 @@ import { isObject } from "@utils/misc";
 import definePlugin, { OptionType } from "@utils/types";
 import { findAll } from "@webpack";
 
-import { disableStreamPause, enableStreamPause } from "./streams";
+import { disableStreamPause, enableStreamPause, setCapStreamResolution } from "./streams";
 
 interface SpringModule {
     Globals: {
@@ -114,6 +114,13 @@ const settings = definePluginSettings({
         default: true,
         restartNeeded: false,
         onChange(v: boolean) { v ? enableStreamPause() : disableStreamPause(); }
+    },
+    capStreamResolution: {
+        type: OptionType.BOOLEAN,
+        description: "Limiter la résolution des streams entrants à leur taille d'affichage (économise du GPU mais peut réduire la netteté)",
+        default: false,
+        restartNeeded: false,
+        onChange(v: boolean) { setCapStreamResolution(v); }
     },
 });
 
@@ -354,6 +361,7 @@ export default definePlugin({
 
         if (limitMsgCache) startCacheCleaner();
         if (settings.store.pauseInactiveStreams) enableStreamPause();
+        setCapStreamResolution(settings.store.capStreamResolution);
         if (settings.store.lowMemoryMode) applyLowMemoryMode(true);
         startMemoryPressureListener();
     },

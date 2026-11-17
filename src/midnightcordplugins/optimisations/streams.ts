@@ -13,6 +13,7 @@ let mutationObserver: MutationObserver | null = null;
 let resizeObserver: ResizeObserver | null = null;
 let scanTimer: ReturnType<typeof setTimeout> | null = null;
 let enabled = false;
+let capResolution = false;
 
 function isStreamVideo(video: HTMLVideoElement) {
     return video.srcObject instanceof MediaStream;
@@ -31,7 +32,7 @@ function getDisplaySize(video: HTMLVideoElement) {
 }
 
 async function capStreamResolution(video: HTMLVideoElement) {
-    if (!enabled || !isStreamVideo(video)) return;
+    if (!enabled || !capResolution || !isStreamVideo(video)) return;
 
     const target = getDisplaySize(video);
     if (!target) return;
@@ -129,6 +130,13 @@ export function enableStreamPause() {
     window.addEventListener("blur", syncAll);
 
     scan();
+}
+
+export function setCapStreamResolution(value: boolean) {
+    capResolution = value;
+    if (!value) return;
+
+    for (const video of videos) void capStreamResolution(video);
 }
 
 export function disableStreamPause() {
