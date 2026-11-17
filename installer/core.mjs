@@ -49,7 +49,7 @@ export async function detectRunningDiscord({ platform = process.platform, target
                     windowsHide: true, timeout: 10_000, maxBuffer: 4 * 1024 * 1024
                 }));
             } catch {
-                return [];
+                throw new Error("Impossible d’analyser les processus Discord.");
             }
 
             for (const line of stdout.split(/\r?\n/)) {
