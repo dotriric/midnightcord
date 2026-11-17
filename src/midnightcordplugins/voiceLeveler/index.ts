@@ -54,7 +54,7 @@ let rnnoiseModule: Promise<any> | undefined;
 
 const FRAME = 480;
 const RING_SIZE = 4096;
-const SILENCE = 1e-4;
+const SILENCE = 2e-3;
 
 const settings = definePluginSettings({
     equalize: {
