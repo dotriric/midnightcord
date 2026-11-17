@@ -188,7 +188,12 @@ async function playSound(sound: SoundboardSound) {
 
     const duration = await soundDuration(audio);
     const previous = endTimers.get(sound.soundId);
-    if (previous) clearTimeout(previous);
+    if (previous) {
+        clearTimeout(previous);
+        endTimers.delete(sound.soundId);
+        dispatchPlayState("GUILD_SOUNDBOARD_SOUND_PLAY_END", sound.soundId);
+    }
+
     endTimers.set(sound.soundId, setTimeout(() => {
         dispatchPlayState("GUILD_SOUNDBOARD_SOUND_PLAY_END", sound.soundId);
         endTimers.delete(sound.soundId);
@@ -212,8 +217,6 @@ function readSound(element: Element): SoundboardSound | undefined {
 
     return undefined;
 }
-
-let lastTrigger = 0;
 
 function playLocalCopy(sound: SoundboardSound) {
     if (!settings.store.localMonitor) return;
@@ -294,7 +297,9 @@ function onActivate(event: Event) {
     if (!sound) return;
 
     if (canPlayNatively(sound)) {
-        if (event.type === "pointerdown") playLocalCopy(sound);
+        if (event.type === "pointerdown" || (event.type === "click" && (event as MouseEvent).detail === 0)) {
+            playLocalCopy(sound);
+        }
         return;
     }
 
@@ -302,11 +307,7 @@ function onActivate(event: Event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    if (event.type !== "pointerdown") return;
-
-    const now = Date.now();
-    if (now - lastTrigger < 500) return;
-    lastTrigger = now;
+    if (event.type !== "pointerdown" && !(event.type === "click" && (event as MouseEvent).detail === 0)) return;
 
     void handleSound(sound);
 }
