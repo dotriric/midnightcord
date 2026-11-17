@@ -13,8 +13,14 @@ import { getPlatformSpoofInfo } from "./gnuSpoofing";
 import { sendRendererCommand } from "./ipcCommands";
 import { handle } from "./utils/ipcWrappers";
 
+let thumbnailCache = new Map<string, string>();
+
 export function registerScreenShareHandler() {
     handle(IpcEvents.CAPTURER_GET_LARGE_THUMBNAIL, async (_, id: string) => {
+        const cached = thumbnailCache.get(id);
+        if (cached) return cached;
+        if (isWayland) return "";
+
         const sources = await desktopCapturer.getSources({
             types: ["window", "screen"],
             thumbnailSize: {
@@ -22,7 +28,9 @@ export function registerScreenShareHandler() {
                 height: 1080
             }
         });
-        return sources.find(s => s.id === id)?.thumbnail.toDataURL();
+        const thumbnail = sources.find(s => s.id === id)?.thumbnail.toDataURL() ?? "";
+        if (thumbnail) thumbnailCache.set(id, thumbnail);
+        return thumbnail;
     });
 
     session.defaultSession.setDisplayMediaRequestHandler(async (request, callback) => {
@@ -55,6 +63,7 @@ export function registerScreenShareHandler() {
             name,
             url: thumbnail.toDataURL()
         }));
+        thumbnailCache = new Map(data.map(source => [source.id, source.url]));
 
         if (isWayland && data.length === 1) {
             const video = data[0];
