@@ -157,7 +157,7 @@ export class TypeRuntime {
 
     async complete(owner: number, id: string, prefix: string, language: Language): Promise<string> {
         if (!validRequest(id, prefix, language) || this.setupJob || this.removal) return "";
-        // Fatal startup failures need the user's explicit Retry; do not rehash 491 MB on every keystroke pause.
+        // Fatal startup failures need the user's explicit Retry; do not rehash the model on every keystroke pause.
         if (this.failure && /^(model-missing|runtime-start-failed|runtime-start-timeout|runtime-stop-failed)$/.test(this.failure)) return "";
         // A single bounded inference slot; another Discord window cannot cancel its owner's job.
         if (this.job && this.job.owner !== owner) return "";

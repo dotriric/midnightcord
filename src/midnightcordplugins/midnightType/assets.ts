@@ -176,8 +176,8 @@ export class TypeAssets {
             manifest.files.push({ path: "model.gguf", bytes: MODEL.bytes, sha256: MODEL.sha256 });
             const notice = Buffer.from("MidnightType optional local model assets\n\n"
                 + "llama.cpp b11840 - MIT - ggml-org contributors\nhttps://github.com/ggml-org/llama.cpp/blob/b11840/LICENSE\n\n"
-                + "Qwen2.5-0.5B-Instruct-GGUF - Apache-2.0 - Qwen / Alibaba Cloud\n"
-                + "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF\nhttps://www.apache.org/licenses/LICENSE-2.0\n\n"
+                + "Qwen2.5-1.5B-Instruct-GGUF - Apache-2.0 - Qwen / Alibaba Cloud\n"
+                + "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF\nhttps://www.apache.org/licenses/LICENSE-2.0\n\n"
                 + "This model runs locally. Its suggestions can be inaccurate and always require user acceptance.\n");
             await writeFile(join(staging, "THIRD_PARTY.txt"), notice, { flag: "wx", mode: 0o600 });
             manifest.files.push({ path: "THIRD_PARTY.txt", bytes: notice.length, sha256: createHash("sha256").update(notice).digest("hex") });

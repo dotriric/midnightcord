@@ -202,7 +202,7 @@ function ModelPanel() {
         {!active && native() && <p>Activez d'abord le plugin MidnightType pour préparer le modèle.</p>}
         {(error || modelError) && <p className="mc-type-error" role="alert">{error || modelError}</p>}
         <p className="mc-type-hint">La première suggestion peut demander un peu plus de temps au chargement du modèle. La vitesse dépend du processeur ; seuls les derniers caractères du brouillon actif sont utilisés. Les suggestions sont suspendues pour les messages sur plusieurs lignes et lorsque plusieurs zones de saisie sont ouvertes.</p>
-        <p className="mc-type-hint">Moteur <a href="https://github.com/ggml-org/llama.cpp" target="_blank" rel="noreferrer">llama.cpp (MIT)</a> · modèle <a href="https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF" target="_blank" rel="noreferrer">Qwen2.5 0.5B (Apache 2.0)</a>.</p>
+        <p className="mc-type-hint">Moteur <a href="https://github.com/ggml-org/llama.cpp" target="_blank" rel="noreferrer">llama.cpp (MIT)</a> · modèle <a href="https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF" target="_blank" rel="noreferrer">Qwen2.5 1.5B (Apache 2.0)</a>.</p>
     </section>;
 }
 
