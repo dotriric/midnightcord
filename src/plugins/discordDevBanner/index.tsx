@@ -9,7 +9,7 @@ import "./styles.css";
 import { Devs, EquicordDevs } from "@utils/constants";
 import definePlugin from "@utils/types";
 
-import { makeDevBanner, settings } from "./components";
+import { DEFAULT_FORMAT, LEGACY_FORMAT, makeDevBanner, settings } from "./components";
 
 export default definePlugin({
     name: "DiscordDevBanner",
@@ -37,4 +37,8 @@ export default definePlugin({
         }
     ],
     makeDevBanner,
+
+    start() {
+        if (settings.store.format === LEGACY_FORMAT) settings.store.format = DEFAULT_FORMAT;
+    },
 });
