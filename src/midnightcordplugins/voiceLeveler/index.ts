@@ -312,6 +312,11 @@ function sweep() {
             detach(chain);
             continue;
         }
+
+        if (data.audioElement?.paused) {
+            data.audioElement.play?.().catch(() => detach(chain));
+        }
+
         updateChain(chain);
     }
 

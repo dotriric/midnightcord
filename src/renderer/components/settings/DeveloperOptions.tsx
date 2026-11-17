@@ -29,14 +29,14 @@ function openDeveloperOptionsModal(settings: Settings) {
         <ModalRoot {...props} size={ModalSize.MEDIUM}>
             <ModalHeader>
                 <BaseText size="lg" weight="semibold" tag="h3" style={{ flexGrow: 1 }}>
-                    Equibop Developer Options
+                    Midnightcord Developer Options
                 </BaseText>
                 <ModalCloseButton onClick={props.onClose} />
             </ModalHeader>
 
             <ModalContent>
                 <div style={{ padding: "1em 0" }}>
-                    <Heading tag="h5">Equicord Location</Heading>
+                    <Heading tag="h5">Midnightcord Location</Heading>
                     <EquicordLocationPicker settings={settings} />
 
                     <Heading tag="h5" className={Margins.top16}>
@@ -61,7 +61,7 @@ const EquicordLocationPicker: SettingsComponent = ({ settings }) => {
     return (
         <>
             <Paragraph>
-                Equicord files are loaded from{" "}
+                Midnightcord files are loaded from{" "}
                 {usingCustomEquicordDir ? (
                     <TextButton
                         variant="link"
@@ -86,7 +86,7 @@ const EquicordLocationPicker: SettingsComponent = ({ settings }) => {
                                 break;
                             case "ok":
                                 Toasts.show({
-                                    message: "Equicord install changed. Fully restart Equibop to apply.",
+                                    message: "Midnightcord install changed. Fully restart Midnightcord to apply.",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.SUCCESS
                                 });
@@ -94,7 +94,7 @@ const EquicordLocationPicker: SettingsComponent = ({ settings }) => {
                             case "invalid":
                                 Toasts.show({
                                     message:
-                                        "You did not choose a valid Equicord install. Make sure you're selecting the dist dir!",
+                                        "You did not choose a valid Midnightcord install. Make sure you're selecting the dist dir!",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.FAILURE
                                 });

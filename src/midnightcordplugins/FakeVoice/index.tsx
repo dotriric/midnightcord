@@ -34,8 +34,9 @@ function sendFakeVoiceState() {
         const channel = ChannelStore?.getChannel?.(channelId);
 
         // If active, use our fake states. If inactive, restore the real Discord states.
-        const muteState = isGhostActive ? configFakeMute : MediaEngineStore.isSelfMute();
         const deafState = isGhostActive ? configFakeDeafen : MediaEngineStore.isSelfDeaf();
+        // Discord always reports self_mute alongside self_deaf, otherwise the state is dropped.
+        const muteState = deafState || (isGhostActive ? configFakeMute : MediaEngineStore.isSelfMute());
 
         socket.send(4, {
             guild_id: channel?.guild_id ?? null,

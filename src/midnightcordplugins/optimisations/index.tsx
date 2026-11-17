@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { DataStore } from "@api/index";
 import { isPluginEnabled } from "@api/PluginManager";
 import { definePluginSettings } from "@api/Settings";
 import { Logger } from "@utils/Logger";
@@ -11,7 +12,7 @@ import { isObject } from "@utils/misc";
 import definePlugin, { OptionType } from "@utils/types";
 import { findAll } from "@webpack";
 
-import { disableStreamPause, enableStreamPause, setCapStreamResolution } from "./streams";
+import * as streamUtils from "./streams";
 
 interface SpringModule {
     Globals: {
@@ -110,17 +111,17 @@ const settings = definePluginSettings({
     },
     pauseInactiveStreams: {
         type: OptionType.BOOLEAN,
-        description: "Mettre en pause le décodage des streams hors écran ou quand la fenêtre est masquée (économise beaucoup de CPU/GPU)",
-        default: true,
+        description: "Mettre en pause le décodage des streams hors écran ou quand la fenêtre est masquée (économise beaucoup de CPU/GPU, mais peut provoquer des images noires temporaires)",
+        default: false,
         restartNeeded: false,
-        onChange(v: boolean) { v ? enableStreamPause() : disableStreamPause(); }
+        onChange(v: boolean) { v ? streamUtils.enableStreamPause() : streamUtils.disableStreamPause(); }
     },
     capStreamResolution: {
         type: OptionType.BOOLEAN,
         description: "Limiter la résolution des streams entrants à leur taille d'affichage (économise du GPU mais peut réduire la netteté)",
         default: false,
         restartNeeded: false,
-        onChange(v: boolean) { setCapStreamResolution(v); }
+        onChange(v: boolean) { streamUtils.setCapStreamResolution(v); }
     },
 });
 
@@ -360,8 +361,16 @@ export default definePlugin({
         buildAndInjectCss();
 
         if (limitMsgCache) startCacheCleaner();
-        if (settings.store.pauseInactiveStreams) enableStreamPause();
-        setCapStreamResolution(settings.store.capStreamResolution);
+
+        // Streams paused by this option can briefly turn black when Discord reattaches them.
+        // Disable it once for existing installs that inherited the old default.
+        if (!DataStore.get("midnightcord_streamPauseDefaultOff")) {
+            if (settings.store.pauseInactiveStreams) settings.store.pauseInactiveStreams = false;
+            DataStore.set("midnightcord_streamPauseDefaultOff", true);
+        }
+
+        if (settings.store.pauseInactiveStreams) streamUtils.enableStreamPause();
+        streamUtils.setCapStreamResolution(settings.store.capStreamResolution);
         if (settings.store.lowMemoryMode) applyLowMemoryMode(true);
         startMemoryPressureListener();
     },
@@ -375,7 +384,7 @@ export default definePlugin({
 
         removeCss();
         stopCacheCleaner();
-        disableStreamPause();
+        streamUtils.disableStreamPause();
         startAggressiveGc(false);
         stopMemoryPressureListener();
     }

@@ -140,7 +140,7 @@ export function checkCommandLineForHelpOrVersion() {
             Chromium Options:
               See <https://peter.sh/experiments/chromium-command-line-switches> - only some of them work
 
-            Vesktop Options:
+            Midnightcord Options:
         `;
 
         const optionLines = Object.entries(options)

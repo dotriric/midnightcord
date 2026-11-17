@@ -289,21 +289,19 @@ function initWindowIcon(win: BrowserWindow) {
 }
 
 function initStaticTitle(win: BrowserWindow) {
-    const listener = (e: { preventDefault(): void; }) => e.preventDefault();
-
-    const applyStaticTitle = () => {
+    const listener = (e: { preventDefault(): void; }, title: string) => {
+        e.preventDefault();
         if (win.isDestroyed()) return;
 
         if (Settings.store.staticTitle) {
             win.setTitle("Midnightcord");
-            win.on("page-title-updated", listener);
-        } else {
-            win.off("page-title-updated", listener);
+            return;
         }
+
+        win.setTitle(title.replace(/Discord/, "Midnightcord"));
     };
 
-    applyStaticTitle();
-    addSettingsListener("staticTitle", applyStaticTitle);
+    win.on("page-title-updated", listener);
 }
 
 function getWindowBoundsOptions(): BrowserWindowConstructorOptions {
