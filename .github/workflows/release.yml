@@ -180,6 +180,7 @@ jobs:
       - native
       - linux-injector
       - update-payload
+    if: ${{ !cancelled() && needs.linux-injector.result == 'success' && needs.update-payload.result == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -188,6 +189,16 @@ jobs:
         with:
           path: release-assets
           merge-multiple: true
+
+      - name: Verify required platforms are present
+        shell: bash
+        run: |
+          for platform in windows-x64 linux-x64 linux-arm64 macos-x64; do
+            if ! ls release-assets/*"$platform"* >/dev/null 2>&1; then
+              echo "::error::Missing release assets for $platform"
+              exit 1
+            fi
+          done
 
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
