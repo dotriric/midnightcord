@@ -60,6 +60,13 @@ export function registerScreenShareHandler() {
             const video = data[0];
             if (!video) return callback({});
 
+            const stream = await sendRendererCommand<StreamPick>(IpcCommands.SCREEN_SHARE_PICKER, {
+                screens: [video],
+                skipPicker: true
+            }).catch(() => null);
+
+            if (stream === null) return callback({});
+
             callback({ video: sources[0] });
             return;
         }
