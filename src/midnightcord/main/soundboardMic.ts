@@ -111,7 +111,7 @@ async function findDiscordOutputs() {
         .split(/\n(?=Source Output #)/)
         .map(block => ({
             id: block.match(/Source Output #(\d+)/)?.[1],
-            binary: /application\.process\.binary = "electron"/.test(block),
+            binary: /application\.process\.binary = "(?:electron|midnightcord|vesktop|equibop)"/i.test(block),
             record: /media\.name = "RecordStream"/.test(block),
             source: block.match(/\n\tSource: (\S+)/)?.[1]
         }))
