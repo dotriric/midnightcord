@@ -65,11 +65,16 @@ function init() {
 
             if (isLinux) {
                 enabledFeatures.add("AcceleratedVideoDecodeLinuxGL");
-                enabledFeatures.add("AcceleratedVideoDecodeLinuxZeroCopyGL");
                 enabledFeatures.add("VaapiVideoDecoder");
                 enabledFeatures.add("VaapiVideoEncoder");
                 enabledFeatures.add("VaapiIgnoreDriverChecks");
-                app.commandLine.appendSwitch("enable-zero-copy");
+
+                // Zero-copy video surfaces are promoted above the UI on NVIDIA Wayland,
+                // which hides menus and overlays while a stream is playing.
+                if (process.env.MIDNIGHTCORD_FLATPAK !== "1") {
+                    enabledFeatures.add("AcceleratedVideoDecodeLinuxZeroCopyGL");
+                    app.commandLine.appendSwitch("enable-zero-copy");
+                }
             }
         }
     }
