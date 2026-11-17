@@ -56,7 +56,7 @@ export function registerScreenShareHandler() {
             url: thumbnail.toDataURL()
         }));
 
-        if (isWayland) {
+        if (isWayland && data.length === 1) {
             const video = data[0];
             if (!video) return callback({});
 
