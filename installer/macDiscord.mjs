@@ -2,15 +2,15 @@
 
 import { execFile } from "node:child_process";
 import { realpathSync } from "node:fs";
-import { basename, dirname, join, resolve, sep } from "node:path";
+import { posix } from "node:path";
 import { setTimeout } from "node:timers/promises";
 import { promisify } from "node:util";
 
 export function macAppPath(target) {
-    const resources = resolve(target.path);
-    const contents = dirname(resources);
-    const app = dirname(contents);
-    if (basename(resources) !== "Resources" || basename(contents) !== "Contents" || !app.endsWith(".app")) {
+    const resources = posix.resolve(target.path);
+    const contents = posix.dirname(resources);
+    const app = posix.dirname(contents);
+    if (posix.basename(resources) !== "Resources" || posix.basename(contents) !== "Contents" || !app.endsWith(".app")) {
         throw new Error("Installation macOS invalide : " + target.path);
     }
     return app;
@@ -18,7 +18,7 @@ export function macAppPath(target) {
 
 export function createMacDiscordController({ execute = promisify(execFile), signal = process.kill, wait = setTimeout } = {}) {
     async function processesFor(targets) {
-        const bundles = targets.map(target => ({ target, prefix: join(macAppPath(target), "Contents") + sep }));
+        const bundles = targets.map(target => ({ target, prefix: posix.join(macAppPath(target), "Contents") + posix.sep }));
         // comm contains the executable path, without arguments. Limit the scan to
         // this user's processes, including helpers left behind by a closed window.
         const { stdout } = await execute("ps", ["-x", "-o", "pid=,comm="], { timeout: 10_000, maxBuffer: 4 * 1024 * 1024 });
