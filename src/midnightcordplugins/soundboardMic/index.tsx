@@ -40,6 +40,11 @@ const settings = definePluginSettings({
         description: "Also play the sound locally so you can hear it",
         default: true
     },
+    stopPrevious: {
+        type: OptionType.BOOLEAN,
+        description: "Stop the previous sound when a new one starts",
+        default: false
+    },
     autoSwitchInput: {
         type: OptionType.BOOLEAN,
         description: "Automatically switch the Discord input device to the virtual microphone",
@@ -87,6 +92,10 @@ function showError(message: string) {
 }
 
 function stopAll() {
+    for (const soundId of endTimers.keys()) {
+        dispatchPlayState("GUILD_SOUNDBOARD_SOUND_PLAY_END", soundId);
+    }
+
     for (const player of players) {
         player.pause();
         player.src = "";
@@ -151,7 +160,7 @@ function startPlayer(audio: HTMLAudioElement) {
 }
 
 async function playSound(sound: SoundboardSound) {
-    stopAll();
+    if (settings.store.stopPrevious) stopAll();
 
     const url = soundUrl(sound.soundId);
     const volume = Math.min(1, Math.min(2, Math.max(0, settings.store.volume / 100)));

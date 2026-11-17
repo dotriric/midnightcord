@@ -4220,6 +4220,8 @@ export const translations: TranslationMap = {
     "Create Groq API Key": { fr: "Créer une clé API Groq" },
     "AI Chat with Groq, OpenAI, NanoGPT, Mistral or any OpenAI-compatible provider, accessible from the toolbox and message context menu.": { fr: "Chat IA avec Groq, OpenAI, NanoGPT, Mistral ou tout fournisseur compatible OpenAI, accessible depuis la boîte à outils et le menu contextuel des messages." },
     "Custom (OpenAI-compatible)": { fr: "Personnalisé (compatible OpenAI)" },
+    "Stop the previous sound when a new one starts": { fr: "Arrêter le son précédent quand un nouveau démarre" },
+    "Limiter la résolution des streams entrants à leur taille d'affichage (économise du GPU mais peut réduire la netteté)": { fr: "Limiter la résolution des streams entrants à leur taille d'affichage (économise du GPU mais peut réduire la netteté)" },
     "unknown error": { fr: "erreur inconnue" },
 };
 
