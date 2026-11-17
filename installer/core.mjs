@@ -38,10 +38,31 @@ function processChannel(name) {
 export async function detectRunningDiscord({ platform = process.platform, targets = [] } = {}) {
     const labels = new Set();
     if (platform === "win32") {
-        const { stdout } = await exec("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command",
-            "Get-CimInstance Win32_Process -ErrorAction Stop | Select-Object Name,ExecutablePath | ConvertTo-Json -Compress"
-        ], { windowsHide: true, timeout: 10_000, maxBuffer: 4 * 1024 * 1024 });
-        const processes = JSON.parse(stdout.trim() || "[]");
+        let stdout;
+        try {
+            ({ stdout } = await exec("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command",
+                "Get-CimInstance Win32_Process -ErrorAction Stop | Select-Object Name,ExecutablePath | ConvertTo-Json -Compress"
+            ], { windowsHide: true, timeout: 10_000, maxBuffer: 4 * 1024 * 1024 }));
+        } catch {
+            try {
+                ({ stdout } = await exec("tasklist.exe", ["/fo", "csv", "/nh"], {
+                    windowsHide: true, timeout: 10_000, maxBuffer: 4 * 1024 * 1024
+                }));
+            } catch {
+                return [];
+            }
+
+            for (const line of stdout.split(/\r?\n/)) {
+                const name = /^"([^"]+)"/.exec(line)?.[1];
+                if (!name) continue;
+                const channel = processChannel(name);
+                if (channel) labels.add(channelNames[channel]);
+            }
+            return [...labels];
+        }
+
+        let processes;
+        try { processes = JSON.parse(stdout.trim() || "[]"); } catch { processes = []; }
         for (const process of Array.isArray(processes) ? processes : [processes]) {
             const channel = processChannel(process.Name ?? "");
             if (channel) labels.add(channelNames[channel]);

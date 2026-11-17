@@ -9,6 +9,8 @@ import "./ipc";
 import "./userAssets";
 import "./vesktopProtocol";
 
+import { existsSync } from "node:fs";
+
 import { app, BrowserWindow, nativeTheme } from "electron";
 
 import { CommandLine } from "./cli";
@@ -26,6 +28,10 @@ process.env.Midnightcord_USER_DATA_DIR = DATA_DIR;
 process.env.MIDNIGHTCORD_USER_DATA_DIR = DATA_DIR;
 
 const isLinux = process.platform === "linux";
+if (isLinux && !process.env.LIBVA_DRIVER_NAME && existsSync("/proc/driver/nvidia/version")) {
+    process.env.LIBVA_DRIVER_NAME = "nvidia";
+    process.env.NVD_BACKEND = "direct";
+}
 if (isLinux) {
     app.setDesktopName("midnightcord.desktop");
     if (!app.commandLine.hasSwitch("class")) {
