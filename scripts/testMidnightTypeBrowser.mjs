@@ -27,7 +27,7 @@ const { outputFiles } = await build({
     entryPoints: [join(root, "src/midnightcordplugins/midnightType/composer.ts")],
     bundle: true, format: "iife", globalName: "ComposerTest", platform: "browser", write: false
 });
-const browser = await puppeteer.launch({ executablePath, headless: true, args: ["--disable-background-networking", "--disable-component-update", "--no-first-run"] });
+const browser = await puppeteer.launch({ executablePath, headless: true, timeout: 120_000, args: ["--disable-background-networking", "--disable-component-update", "--no-first-run"] });
 try {
     const page = await browser.newPage();
     const network = [];

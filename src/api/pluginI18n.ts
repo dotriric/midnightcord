@@ -3533,6 +3533,14 @@ const pluginTranslations: Record<string, LangMap> = {
     "🗑 Clear": { fr: "🗑 Effacer", es: "🗑 Claro", ru: "🗑 Очистить", zh: "🗑 清除" },
     "🗑️ Delete for both": { fr: "🗑️ Supprimer pour les deux", es: "🗑️ Eliminar para ambos", ru: "🗑️ Удалить оба", zh: "🗑️ 两者都删除" },
     "🗑️ Delete wallpaper": { fr: "🗑️ Supprimer le fond d'écran", es: "🗑️ Eliminar fondo de pantalla", ru: "🗑️ Удалить обои", zh: "🗑️删除壁纸" },
+    "VoiceLeveler": {"fr": "Équilibreur vocal", "es": "Nivelador de voz", "ru": "Выравниватель голоса", "zh": "语音均衡器"},
+    "Automatically balances the volume of everyone in voice and can remove background noise from their microphones with RNNoise.": {"fr": "Équilibre automatiquement le volume de toutes les personnes en vocal et peut supprimer le bruit de fond de leurs micros avec RNNoise.", "es": "Equilibra automáticamente el volumen de todos en voz y puede eliminar el ruido de fondo de sus micrófonos con RNNoise.", "ru": "Автоматически выравнивает громкость всех участников голосового канала и может удалять фоновый шум с их микрофонов с помощью RNNoise.", "zh": "自动平衡语音频道中所有人的音量，并可使用 RNNoise 去除他们麦克风中的背景噪音。"},
+    "Automatically boost quiet voices and lower loud ones": {"fr": "Augmente automatiquement les voix faibles et baisse les voix fortes", "es": "Aumenta automáticamente las voces bajas y reduce las fuertes", "ru": "Автоматически усиливает тихие голоса и приглушает громкие", "zh": "自动提高轻声说话者的音量并降低过大的音量"},
+    "Target voice level (dBFS)": {"fr": "Niveau cible des voix (dBFS)", "es": "Nivel objetivo de voz (dBFS)", "ru": "Целевой уровень голоса (dBFS)", "zh": "目标语音电平 (dBFS)"},
+    "Maximum volume boost for quiet users (dB)": {"fr": "Gain maximal pour les personnes qui parlent doucement (dB)", "es": "Aumento máximo de volumen para usuarios silenciosos (dB)", "ru": "Максимальное усиление для тихих пользователей (дБ)", "zh": "轻声用户的最大音量提升 (dB)"},
+    "Global volume applied to every voice user (%)": {"fr": "Volume global appliqué à toutes les personnes en vocal (%)", "es": "Volumen global aplicado a todos los usuarios de voz (%)", "ru": "Общая громкость для всех участников голоса (%)", "zh": "应用于所有语音用户的全局音量 (%)"},
+    "Remove background noise from incoming voices with RNNoise": {"fr": "Supprime le bruit de fond des voix entrantes avec RNNoise", "es": "Elimina el ruido de fondo de las voces entrantes con RNNoise", "ru": "Удаляет фоновый шум из входящих голосов с помощью RNNoise", "zh": "使用 RNNoise 去除传入语音中的背景噪音"},
+
 };
 
 /**
