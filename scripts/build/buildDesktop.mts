@@ -55,7 +55,8 @@ const NodeCommonOpts: BuildOptions = {
         IS_EQUIBOP: "true",
         VERSION: JSON.stringify(VERSION),
         BUILD_TIMESTAMP: JSON.stringify(BUILD_TIMESTAMP),
-        EQUIBOP_GIT_HASH: JSON.stringify(gitHash)
+        EQUIBOP_GIT_HASH: JSON.stringify(gitHash),
+        Midnightcord_GIT_HASH: JSON.stringify(gitHash)
     }
 };
 
